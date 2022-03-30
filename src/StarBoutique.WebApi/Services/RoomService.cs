@@ -13,10 +13,16 @@ public interface IRoomService
 
 public class RoomService : IRoomService
 {
+    private Dictionary<RoomStatus, IEnumerable<RoomStatus>> allowedRoomStatus;
     private IRoomRepository repository;
     public RoomService()
     {
         repository = new RoomRepository();
+        allowedRoomStatus = new Dictionary<RoomStatus, IEnumerable<RoomStatus>>();
+        allowedRoomStatus.Add(RoomStatus.Available, new List<RoomStatus> {RoomStatus.Occupied});
+        allowedRoomStatus.Add(RoomStatus.Occupied, new List<RoomStatus> {RoomStatus.Vacant});
+        allowedRoomStatus.Add(RoomStatus.Repair, new List<RoomStatus> {RoomStatus.Vacant});
+        allowedRoomStatus.Add(RoomStatus.Vacant, new List<RoomStatus> {RoomStatus.Available, RoomStatus.Repair});
     }
     public IEnumerable<Room> GetAllRooms()
     {
@@ -29,12 +35,25 @@ public class RoomService : IRoomService
 
         if(room != null)
         {
-            room.Status = status;
-            repository.UpdateRoom(room);
+            var currentStatus = room.Status;
+            if(currentStatus == status)
+            {
+                throw new Exception($"Room is already {currentStatus}.");
+            }
+
+            if(allowedRoomStatus[currentStatus].Contains(status))
+            {
+                room.Status = status;                
+                repository.UpdateRoom(room);
+            }
+            else
+            {
+                throw new InvalidStatusUpdateException();
+            }
         }
         else
         {
-            throw new NotFoundException("Room not found.");
+            throw new RoomNotFoundExceptiion();
         }
     }
 
@@ -48,7 +67,7 @@ public class RoomService : IRoomService
         }
         else
         {
-            throw new NotFoundException("Room not found.");
+            throw new RoomNotFoundExceptiion();
         }
     }
 }

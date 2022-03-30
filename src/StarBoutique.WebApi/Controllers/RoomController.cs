@@ -28,13 +28,13 @@ public class RoomController : ControllerBase
         {
             return new JsonResult(roomService.GetRoomById(roomId));
         }
-        catch(NotFoundException)
+        catch(RoomNotFoundExceptiion)
         {
             return NotFound(new {error = "Room not found."});
         }
     }
 
-    [HttpPost("{roomId}")]
+    [HttpPost("allocate/{roomId}")]
     public ActionResult Allocate(string? roomId, AllocationModel model)
     {
         if (!ModelState.IsValid)
@@ -45,7 +45,7 @@ public class RoomController : ControllerBase
             roomService.UpdateRoomStatus(roomId, RoomStatus.Occupied);
             return NoContent();
         }
-        catch(NotFoundException)
+        catch(RoomNotFoundExceptiion)
         {
             return BadRequest(new {error = "Invalid roomid provided."});
         }

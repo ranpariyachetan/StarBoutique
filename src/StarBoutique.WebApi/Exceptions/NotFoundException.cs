@@ -1,9 +1,17 @@
 namespace StarBoutique.WebApi.Exceptions;
 
-public class NotFoundException : Exception
+public class RoomNotFoundExceptiion : Exception
 {
-    public NotFoundException(string message) : base(message)
+    public RoomNotFoundExceptiion() : base("Room not found")
     {
-        
+
+    }
+}
+
+public class InvalidStatusUpdateException : Exception
+{
+    public InvalidStatusUpdateException() : base("Specified status update is not valid.")
+    {
+
     }
 }

@@ -5,5 +5,5 @@ namespace StarBoutique.WebApi.Models;
         Available = 1,
         Occupied,
         Vacant,
-        Rapair
+        Repair
     }
