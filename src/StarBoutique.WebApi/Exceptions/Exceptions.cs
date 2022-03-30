@@ -1,8 +1,8 @@
 namespace StarBoutique.WebApi.Exceptions;
 
-public class RoomNotFoundExceptiion : Exception
+public class RoomNotFoundException : Exception
 {
-    public RoomNotFoundExceptiion() : base("Room not found")
+    public RoomNotFoundException() : base("Room not found")
     {
 
     }

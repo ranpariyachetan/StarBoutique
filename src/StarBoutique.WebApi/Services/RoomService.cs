@@ -15,9 +15,9 @@ public class RoomService : IRoomService
 {
     private Dictionary<RoomStatus, IEnumerable<RoomStatus>> allowedRoomStatus;
     private IRoomRepository repository;
-    public RoomService()
+    public RoomService(IRoomRepository roomRepository)
     {
-        repository = new RoomRepository();
+        repository = roomRepository;
         allowedRoomStatus = new Dictionary<RoomStatus, IEnumerable<RoomStatus>>();
         allowedRoomStatus.Add(RoomStatus.Available, new List<RoomStatus> {RoomStatus.Occupied});
         allowedRoomStatus.Add(RoomStatus.Occupied, new List<RoomStatus> {RoomStatus.Vacant});
@@ -53,7 +53,7 @@ public class RoomService : IRoomService
         }
         else
         {
-            throw new RoomNotFoundExceptiion();
+            throw new RoomNotFoundException();
         }
     }
 
@@ -67,7 +67,7 @@ public class RoomService : IRoomService
         }
         else
         {
-            throw new RoomNotFoundExceptiion();
+            throw new RoomNotFoundException();
         }
     }
 }

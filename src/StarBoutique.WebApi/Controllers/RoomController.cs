@@ -1,4 +1,3 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using StarBoutique.WebApi.Models;
 using StarBoutique.WebApi.Services;
@@ -10,9 +9,9 @@ namespace StarBoutique.WebApi.Controllers;
 public class RoomController : ControllerBase
 {
     private IRoomService roomService;
-    public RoomController()
+    public RoomController(IRoomService roomService)
     {
-        this.roomService = new RoomService();
+        this.roomService = roomService;
     }
 
     [HttpGet("all")]
@@ -28,26 +27,27 @@ public class RoomController : ControllerBase
         {
             return new JsonResult(roomService.GetRoomById(roomId));
         }
-        catch(RoomNotFoundExceptiion)
+        catch (RoomNotFoundException)
         {
-            return NotFound(new {error = "Room not found."});
+            return NotFound(new { error = "Room not found." });
         }
     }
 
-    [HttpPost("allocate/{roomId}")]
-    public ActionResult Allocate(string? roomId, AllocationModel model)
+    [HttpPost("{roomId}/assign")]
+    public ActionResult Assign(string? roomId)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         try
         {
             roomService.UpdateRoomStatus(roomId, RoomStatus.Occupied);
             return NoContent();
         }
-        catch(RoomNotFoundExceptiion)
+        catch (RoomNotFoundException)
         {
-            return BadRequest(new {error = "Invalid roomid provided."});
+            return BadRequest(new { error = "Invalid roomid provided." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
         }
     }
 }
