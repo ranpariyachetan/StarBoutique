@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using StarBoutique.WebApi.Models;
 using StarBoutique.WebApi.Services;
+using StarBoutique.WebApi.Exceptions;
 namespace StarBoutique.WebApi.Controllers;
 
 [ApiController]
@@ -21,9 +22,16 @@ public class RoomController : ControllerBase
     }
 
     [HttpGet("{roomId}")]
-    public Room GetRoomById(string roomId)
+    public ActionResult GetRoomById(string roomId)
     {
-        return roomService.GetRoomById(roomId);
+        try
+        {
+            return new JsonResult(roomService.GetRoomById(roomId));
+        }
+        catch(NotFoundException)
+        {
+            return NotFound(new {error = "Room not found."});
+        }
     }
 
     [HttpPost("{roomId}")]
@@ -32,15 +40,14 @@ public class RoomController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = roomService.UpdateRoomStatus(roomId, RoomStatus.Occupied); ;
-        if (result)
+        try
         {
+            roomService.UpdateRoomStatus(roomId, RoomStatus.Occupied);
             return NoContent();
         }
-        else
+        catch(NotFoundException)
         {
-            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            return new JsonResult("Allocation failed due to internal error.");
+            return BadRequest(new {error = "Invalid roomid provided."});
         }
     }
 }
