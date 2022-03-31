@@ -4,6 +4,7 @@ namespace StarBoutique.WebApi.Repositories;
 
 public interface IRoomRepository
 {
+    IEnumerable<Room> GetAllRooms();
     IEnumerable<Room> GetAllRoomsByStatus(RoomStatus status);
     Room? GetRoomById(string? roomId);
 
@@ -17,32 +18,37 @@ public class RoomRepository: IRoomRepository
     private Room nextAvailableRoom;
     public RoomRepository()
     {
-        rooms.Add("1A", new Room{Id="1A", Status = RoomStatus.Available});
-        rooms.Add("1B", new Room{Id="1B", Status = RoomStatus.Available});
-        rooms.Add("1C", new Room{Id="1C", Status = RoomStatus.Available});
-        rooms.Add("1D", new Room{Id="1D", Status = RoomStatus.Available});
-        rooms.Add("1E", new Room{Id="1E", Status = RoomStatus.Available});
-        rooms.Add("2E", new Room{Id="2E", Status = RoomStatus.Available});
-        rooms.Add("2D", new Room{Id="2D", Status = RoomStatus.Available});
-        rooms.Add("2C", new Room{Id="2C", Status = RoomStatus.Available});
-        rooms.Add("2B", new Room{Id="2B", Status = RoomStatus.Available});
-        rooms.Add("2A", new Room{Id="2A", Status = RoomStatus.Available});
-        rooms.Add("3A", new Room{Id="3A", Status = RoomStatus.Available});
-        rooms.Add("3B", new Room{Id="3A", Status = RoomStatus.Available});
-        rooms.Add("3C", new Room{Id="3B", Status = RoomStatus.Available});
-        rooms.Add("3D", new Room{Id="3C", Status = RoomStatus.Available});
-        rooms.Add("3E", new Room{Id="3D", Status = RoomStatus.Available});
-        rooms.Add("4E", new Room{Id="4E", Status = RoomStatus.Available});
-        rooms.Add("4D", new Room{Id="4D", Status = RoomStatus.Available});
-        rooms.Add("4C", new Room{Id="4C", Status = RoomStatus.Available});
-        rooms.Add("4B", new Room{Id="4B", Status = RoomStatus.Available});
-        rooms.Add("4A", new Room{Id="4A", Status = RoomStatus.Available});
+        rooms.Add("1A", new Room{Id="1A", RoomStatus = RoomStatus.Available});
+        rooms.Add("1B", new Room{Id="1B", RoomStatus = RoomStatus.Available});
+        rooms.Add("1C", new Room{Id="1C", RoomStatus = RoomStatus.Available});
+        rooms.Add("1D", new Room{Id="1D", RoomStatus = RoomStatus.Available});
+        rooms.Add("1E", new Room{Id="1E", RoomStatus = RoomStatus.Available});
+        rooms.Add("2E", new Room{Id="2E", RoomStatus = RoomStatus.Available});
+        rooms.Add("2D", new Room{Id="2D", RoomStatus = RoomStatus.Available});
+        rooms.Add("2C", new Room{Id="2C", RoomStatus = RoomStatus.Available});
+        rooms.Add("2B", new Room{Id="2B", RoomStatus = RoomStatus.Available});
+        rooms.Add("2A", new Room{Id="2A", RoomStatus = RoomStatus.Available});
+        rooms.Add("3A", new Room{Id="3A", RoomStatus = RoomStatus.Available});
+        rooms.Add("3B", new Room{Id="3A", RoomStatus = RoomStatus.Available});
+        rooms.Add("3C", new Room{Id="3B", RoomStatus = RoomStatus.Available});
+        rooms.Add("3D", new Room{Id="3C", RoomStatus = RoomStatus.Available});
+        rooms.Add("3E", new Room{Id="3D", RoomStatus = RoomStatus.Available});
+        rooms.Add("4E", new Room{Id="4E", RoomStatus = RoomStatus.Available});
+        rooms.Add("4D", new Room{Id="4D", RoomStatus = RoomStatus.Available});
+        rooms.Add("4C", new Room{Id="4C", RoomStatus = RoomStatus.Available});
+        rooms.Add("4B", new Room{Id="4B", RoomStatus = RoomStatus.Available});
+        rooms.Add("4A", new Room{Id="4A", RoomStatus = RoomStatus.Available});
         nextAvailableRoom = rooms["1A"];
+    }
+
+    public IEnumerable<Room> GetAllRooms()
+    {
+        return rooms.Values;
     }
 
     public IEnumerable<Room> GetAllRoomsByStatus(RoomStatus status)
     {
-        return rooms.Values.Where(room => room.Status == status);
+        return rooms.Values.Where(room => room.RoomStatus == status);
     }
 
     public Room? GetRoomById(string roomId)
@@ -66,7 +72,7 @@ public class RoomRepository: IRoomRepository
     {
         foreach(var kvPair in rooms)
         {
-            if(kvPair.Value.Status == RoomStatus.Available)
+            if(kvPair.Value.RoomStatus == RoomStatus.Available)
             {
                 return kvPair.Value;
             }

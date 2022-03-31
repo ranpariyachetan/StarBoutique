@@ -14,10 +14,21 @@ public class RoomController : ControllerBase
         this.roomService = roomService;
     }
 
-    [HttpGet("available")]
-    public IEnumerable<Room> GetAvailableRooms()
+    [HttpGet("all/{status}")]
+    public ActionResult GetAvailableRooms(string status)
     {
-        return roomService.GetAllRooms(RoomStatus.Available);
+        if (status == "all")
+        {
+            return new JsonResult(roomService.GetAllRooms());
+        }
+        else if (Enum.TryParse(status, true, out RoomStatus result))
+        {
+            return new JsonResult(roomService.GetAllRooms(result));
+        }
+        else
+        {
+            return BadRequest(new { error = "Invalid status value passed." });
+        }
     }
 
     [HttpGet("{roomId}")]
@@ -51,74 +62,44 @@ public class RoomController : ControllerBase
     [HttpPost("{roomId}/checkout")]
     public ActionResult CheckOut(string? roomId)
     {
-        try
-        {
-            roomService.UpdateRoomStatus(roomId, RoomStatus.Vacant);
-
-            return new JsonResult(new { roomId = roomId, status = RoomStatus.Vacant.ToString() });
-        }
-        catch (RoomNotAvailableException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        return UpdateRoomStatus(roomId, RoomStatus.Vacant);
     }
 
     [HttpPost("{roomId}/available")]
     public ActionResult Available(string? roomId)
     {
-        try
-        {
-            roomService.UpdateRoomStatus(roomId, RoomStatus.Available);
-
-            return new JsonResult(new { roomId = roomId, status = RoomStatus.Available.ToString() });
-        }
-        catch (InvalidStatusUpdateException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch(RoomNotFoundException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch(Exception ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        return UpdateRoomStatus(roomId, RoomStatus.Available);
     }
 
     [HttpPost("{roomId}/repair")]
     public ActionResult Repair(string? roomId)
     {
-        try
-        {
-            roomService.UpdateRoomStatus(roomId, RoomStatus.Repair);
-
-            return new JsonResult(new { roomId = roomId, status = RoomStatus.Repair.ToString() });
-        }
-        catch (InvalidStatusUpdateException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch(RoomNotFoundException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        return UpdateRoomStatus(roomId, RoomStatus.Repair);
     }
 
     [HttpPost("{roomId}/vacant")]
     public ActionResult Vacant(string? roomId)
     {
+        return UpdateRoomStatus(roomId, RoomStatus.Vacant);
+    }
+
+    private ActionResult UpdateRoomStatus(string? roomId, RoomStatus status)
+    {
         try
         {
-            roomService.UpdateRoomStatus(roomId, RoomStatus.Vacant);
+            roomService.UpdateRoomStatus(roomId, status);
 
-            return new JsonResult(new { roomId = roomId, status = RoomStatus.Vacant.ToString() });
+            return new JsonResult(new { roomId = roomId, status = status });
         }
         catch (InvalidStatusUpdateException ex)
         {
             return BadRequest(new { error = ex.Message });
         }
-        catch(RoomNotFoundException ex)
+        catch (RoomNotFoundException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
         {
             return BadRequest(new { error = ex.Message });
         }
