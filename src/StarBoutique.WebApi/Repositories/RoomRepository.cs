@@ -4,15 +4,17 @@ namespace StarBoutique.WebApi.Repositories;
 
 public interface IRoomRepository
 {
-    IEnumerable<Room> GetAllRooms();
+    IEnumerable<Room> GetAllRoomsByStatus(RoomStatus status);
     Room? GetRoomById(string? roomId);
 
     void UpdateRoom(Room room);
+    Room GetNextAvailableRoom();
 }
 
 public class RoomRepository: IRoomRepository
 {
     private Dictionary<string, Room> rooms = new Dictionary<string, Room>();
+    private Room nextAvailableRoom;
     public RoomRepository()
     {
         rooms.Add("1A", new Room{Id="1A", Status = RoomStatus.Available});
@@ -35,11 +37,12 @@ public class RoomRepository: IRoomRepository
         rooms.Add("4C", new Room{Id="4C", Status = RoomStatus.Available});
         rooms.Add("4B", new Room{Id="4B", Status = RoomStatus.Available});
         rooms.Add("4A", new Room{Id="4A", Status = RoomStatus.Available});
+        nextAvailableRoom = rooms["1A"];
     }
 
-    public IEnumerable<Room> GetAllRooms()
+    public IEnumerable<Room> GetAllRoomsByStatus(RoomStatus status)
     {
-        return rooms.Values;
+        return rooms.Values.Where(room => room.Status == status);
     }
 
     public Room? GetRoomById(string roomId)
@@ -57,5 +60,18 @@ public class RoomRepository: IRoomRepository
         {
             rooms[room.Id] = room;
         }
+    }
+
+    public Room GetNextAvailableRoom()
+    {
+        foreach(var kvPair in rooms)
+        {
+            if(kvPair.Value.Status == RoomStatus.Available)
+            {
+                return kvPair.Value;
+            }
+        }
+
+        return null;
     }
 }

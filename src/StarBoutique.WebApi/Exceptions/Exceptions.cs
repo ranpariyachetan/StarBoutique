@@ -15,3 +15,11 @@ public class InvalidStatusUpdateException : Exception
 
     }
 }
+
+public class RoomNotAvailableException : Exception
+{
+    public RoomNotAvailableException() : base("Room not available for assignment.")
+    {
+        
+    }
+}

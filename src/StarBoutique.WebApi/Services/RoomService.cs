@@ -6,8 +6,10 @@ namespace StarBoutique.WebApi.Services;
 
 public interface IRoomService
 {
-    IEnumerable<Room> GetAllRooms();
+    IEnumerable<Room> GetAllRooms(RoomStatus status);
     void UpdateRoomStatus(string? roomId, RoomStatus roomStatus);
+
+    string AssignRoom();
     Room GetRoomById(string roomId);
 }
 
@@ -24,9 +26,9 @@ public class RoomService : IRoomService
         allowedRoomStatus.Add(RoomStatus.Repair, new List<RoomStatus> {RoomStatus.Vacant});
         allowedRoomStatus.Add(RoomStatus.Vacant, new List<RoomStatus> {RoomStatus.Available, RoomStatus.Repair});
     }
-    public IEnumerable<Room> GetAllRooms()
+    public IEnumerable<Room> GetAllRooms(RoomStatus status)
     {
-        return repository.GetAllRooms();
+        return repository.GetAllRoomsByStatus(status);
     }
 
     public void UpdateRoomStatus(string? roomId, RoomStatus status)
@@ -54,6 +56,22 @@ public class RoomService : IRoomService
         else
         {
             throw new RoomNotFoundException();
+        }
+    }
+
+    public string AssignRoom()
+    {
+        var availableRoom = repository.GetNextAvailableRoom();
+
+        if(availableRoom != null)
+        {
+            availableRoom.Status = RoomStatus.Occupied;
+            repository.UpdateRoom(availableRoom);
+            return availableRoom.Id;
+        }
+        else
+        {
+            throw new RoomNotAvailableException();
         }
     }
 
