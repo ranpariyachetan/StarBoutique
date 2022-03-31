@@ -72,7 +72,15 @@ public class RoomController : ControllerBase
 
             return new JsonResult(new { roomId = roomId, status = RoomStatus.Available.ToString() });
         }
-        catch (RoomNotAvailableException ex)
+        catch (InvalidStatusUpdateException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch(RoomNotFoundException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch(Exception ex)
         {
             return BadRequest(new { error = ex.Message });
         }
@@ -87,7 +95,11 @@ public class RoomController : ControllerBase
 
             return new JsonResult(new { roomId = roomId, status = RoomStatus.Repair.ToString() });
         }
-        catch (RoomNotAvailableException ex)
+        catch (InvalidStatusUpdateException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch(RoomNotFoundException ex)
         {
             return BadRequest(new { error = ex.Message });
         }
@@ -100,9 +112,13 @@ public class RoomController : ControllerBase
         {
             roomService.UpdateRoomStatus(roomId, RoomStatus.Vacant);
 
-            return new JsonResult(new { roomId = roomId, status = RoomStatus.Repair.ToString() });
+            return new JsonResult(new { roomId = roomId, status = RoomStatus.Vacant.ToString() });
         }
-        catch (RoomNotAvailableException ex)
+        catch (InvalidStatusUpdateException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch(RoomNotFoundException ex)
         {
             return BadRequest(new { error = ex.Message });
         }
