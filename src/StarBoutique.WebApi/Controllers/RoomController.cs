@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using StarBoutique.WebApi.Models;
 using StarBoutique.WebApi.Services;
 using StarBoutique.WebApi.Exceptions;
+using System.Net;
 namespace StarBoutique.WebApi.Controllers;
 
 [ApiController]
@@ -101,7 +102,8 @@ public class RoomController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(new { error = ex.Message });
+            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            return new JsonResult(new { error = ex.Message });
         }
     }
 }

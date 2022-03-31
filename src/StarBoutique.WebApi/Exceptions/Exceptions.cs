@@ -14,6 +14,11 @@ public class InvalidStatusUpdateException : Exception
     {
 
     }
+
+    public InvalidStatusUpdateException(string message) : base(message)
+    {
+
+    }
 }
 
 public class RoomNotAvailableException : Exception

@@ -46,7 +46,7 @@ public class RoomService : IRoomService
             var currentStatus = room.RoomStatus;
             if(currentStatus == status)
             {
-                throw new Exception($"Room is already {currentStatus}.");
+                throw new InvalidStatusUpdateException($"Room is already {currentStatus}.");
             }
 
             if(allowedRoomStatus[currentStatus].Contains(status))
