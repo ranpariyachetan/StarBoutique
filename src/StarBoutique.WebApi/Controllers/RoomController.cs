@@ -15,9 +15,9 @@ public class RoomController : ControllerBase
     }
 
     [HttpGet("all/{status}")]
-    public ActionResult GetAvailableRooms(string status)
+    public ActionResult GetRooms(string status)
     {
-        if (status == "all")
+        if (status.ToLower() == "all")
         {
             return new JsonResult(roomService.GetAllRooms());
         }
