@@ -1,5 +1,9 @@
-# How to test this code?
 
+
+## Prerequisites
+* [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) must be installed on the computer for this code to be compiled and run.
+
+## How to test this code?
 * Clone this repo to local machine.
 * Open command prompt or terminal.
 * Navigate to `src` folder.
